@@ -429,26 +429,7 @@ SPDX-License-Identifier: 0BSD
 				})(document.createElement('div'), i);
 			}
 
-			function MM() {
-				var i = 0, p = 0, s = 'MMMOM]QMM]\\MLMMMOM]QMM]\\ORlT]ORlT]\\]QOLOLMLMOLpA';
-				function n() {
-					var c = s.charCodeAt(i++) - 65, m = 70 + c % 11, z = Math.floor(c / 11);
-					if (p > 70) midiHit(p, 0, false);
-					if (m > 70) midiHit(m, 100, true);
-					if (z > 0) setTimeout(n, z * 187);
-					p = m;
-				}
-				n();
-			}
-			{
-				const btn = document.createElement('button');
-				btn.appendChild(document.createTextNode('MegaMan Demo'));
-				btn.type = 'button';
-				btn.style.display = 'block';
-				btn.addEventListener('click', MM);
-				divPlayer.appendChild(btn);
-			}
-			// Register a service
+			// Register the synth as a service for Nallely
 			const parameters = {
 				notes: { min: 0, max: 127 },
 				pitchwheel: { min: 0, max: 127 },
@@ -466,7 +447,7 @@ SPDX-License-Identifier: 0BSD
 				// reload()
 			}
 
-			const device = NallelyWebsocketBus.register('synths', 'ssynth', parameters, opts);
+			const device = NallelyWebsocketBus.register('synths', 'ssynth', parameters, {});
 			device.onmessage = triggerNotes;
 
 		} // loadEverything
