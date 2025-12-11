@@ -270,7 +270,7 @@ SPDX-License-Identifier: 0BSD
 					pool.pop().destroy(); // pop a synth and destroy it
 
 				// recreate the pool based on the new options
-				for (var i = 0; i < 4; i++)
+				for (var i = 0; i < 20; i++)
 					pool.push(SimpleJSSynth(actx.destination, opts));
 
 				// save the options for later comparison
@@ -431,26 +431,47 @@ SPDX-License-Identifier: 0BSD
 
 			// Register the synth as a service for Nallely
 			const parameters = {
-				notes: { min: 0, max: 127 },
+				voice0: { min: 0, max: 127 },
+				voice1: { min: 0, max: 127 },
+				voice2: { min: 0, max: 127 },
+				voice3: { min: 0, max: 127 },
+				voice4: { min: 0, max: 127 },
+				voice5: { min: 0, max: 127 },
 				pitchwheel: { min: 0, max: 127 },
 			};
 
-			function triggerNotes(data) {
-				if (data.on === 'notes') {
-					midiHit(Number.parseInt(data.value), 100, true);
+			const voices = {
+				voice0: 0,
+				voice1: 0,
+				voice2: 0,
+				voice3: 0,
+				voice4: 0,
+				voice5: 0,
+			}
+
+			function updateTrigger(data) {
+				if (data.on in voices) {
+					const prev = voices[data.on]
+					const newNote = Number.parseInt(data.value);
+					if (newNote === 0 || newNote === prev) {
+						midiHit(prev, 100, false);
+						voices[data.on] = 0;
+					} else {
+						midiHit(newNote, 100, true);
+						voices[data.on] = newNote;
+					}
 					return;
 				}
 				if (data.on === "pitchwheel") {
 					midiBend(data.value);
 					return;
 				}
-				// reload()
 			}
 			const params = new URLSearchParams(window.location.search);
 			const nallelyId = params.get("nallelyId") || "ssynth";
 
 			const device = NallelyWebsocketBus.register('synths', nallelyId, parameters, {});
-			device.onmessage = triggerNotes;
+			device.onmessage = updateTrigger;
 
 		} // loadEverything
 	</script>
