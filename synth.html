@@ -270,7 +270,7 @@ SPDX-License-Identifier: 0BSD
 					pool.pop().destroy(); // pop a synth and destroy it
 
 				// recreate the pool based on the new options
-				for (var i = 0; i < 20; i++)
+				for (var i = 0; i < 4; i++)
 					pool.push(SimpleJSSynth(actx.destination, opts));
 
 				// save the options for later comparison
@@ -446,8 +446,10 @@ SPDX-License-Identifier: 0BSD
 				}
 				// reload()
 			}
+			const params = new URLSearchParams(window.location.search);
+			const nallelyId = params.get("nallelyId") || "ssynth";
 
-			const device = NallelyWebsocketBus.register('synths', 'ssynth', parameters, {});
+			const device = NallelyWebsocketBus.register('synths', nallelyId, parameters, {});
 			device.onmessage = triggerNotes;
 
 		} // loadEverything
